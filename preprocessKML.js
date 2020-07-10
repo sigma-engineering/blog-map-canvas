@@ -1,6 +1,5 @@
 const fs = require("fs");
 const parseString = require("xml2js").parseString;
-const BSON = require("bson");
 
 const xml = fs.readFileSync("./Roads_2015.kml");
 
@@ -23,8 +22,5 @@ parseString(xml, function (err, result) {
       .map((coord) => coord.split(",").map(parseFloat))
   );
 
-  fs.writeFileSync(
-    "./public/data.bson",
-    BSON.serialize(final.map((poly) => poly.map(BSON.Long)))
-  );
+  fs.writeFileSync("./public/data.json", JSON.stringify(final));
 });

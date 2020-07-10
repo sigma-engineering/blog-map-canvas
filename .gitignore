@@ -24,6 +24,5 @@ yarn-error.log*
 
 # map stuff that's too big for repo
 Roads_2015.kml
-public/data.txt
-public/data.bson
-public/data.bson.gz
+public/data.json
+public/data.json.gz

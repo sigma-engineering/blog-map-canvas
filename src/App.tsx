@@ -14,21 +14,9 @@ function MapCanvas() {
   const h = window.innerWidth;
 
   React.useEffect(() => {
-    fetch("./data.txt")
-      .then((d) => d.text())
-      .then((text) => {
-        const lines = text
-          .split("\n")
-          .map((line) =>
-            line
-              .split(" ")
-              .map(
-                (coord) => coord.split(",").map(parseFloat) as [number, number]
-              )
-          );
-
-        setData(lines);
-      });
+    fetch("./data.json")
+      .then((d) => d.json())
+      .then(setData);
   }, []);
 
   React.useEffect(() => {
