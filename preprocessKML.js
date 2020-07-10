@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { isEqual } = require("lodash");
 const parseString = require("xml2js").parseString;
 
 const xml = fs.readFileSync("./Roads_2015.kml");
@@ -15,12 +16,31 @@ parseString(xml, function (err, result) {
     })
     .filter((p) => p !== null);
 
-  const final = paths.map((path) =>
+  const rounded = paths.map((path) =>
     path
       .toString()
       .split(" ")
-      .map((coord) => coord.split(",").map(parseFloat))
+      .map((coord) =>
+        coord.split(",").map((v) => parseFloat(parseFloat(v).toFixed(5)))
+      )
   );
 
-  fs.writeFileSync("./public/data.json", JSON.stringify(final));
+  // strip duplicate points
+  let strippedPointCount = 0;
+  const deduped = rounded.map((path) => {
+    let lastPoint = null;
+    return path.filter((p) => {
+      if (!isEqual(lastPoint, p)) {
+        lastPoint = p;
+        strippedPointCount++;
+        return true;
+      } else {
+        return false;
+      }
+    });
+  });
+
+  console.log(`stripped ${strippedPointCount} duplicate points`);
+
+  fs.writeFileSync("./public/data.json", JSON.stringify(deduped));
 });
