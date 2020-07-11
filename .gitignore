@@ -27,3 +27,5 @@ Roads_2015.kml
 Roads_2015.kml.gz
 public/data.json
 public/data.json.gz
+public/data.msgpack
+public/data.msgpack.gz
