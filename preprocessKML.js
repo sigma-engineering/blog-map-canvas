@@ -27,9 +27,11 @@ parseString(xml, function (err, result) {
 
   // strip duplicate points
   let strippedPointCount = 0;
+  let totalPoints = 0;
   const deduped = rounded.map((path) => {
     let lastPoint = null;
     return path.filter((p) => {
+      totalPoints++;
       if (!isEqual(lastPoint, p)) {
         lastPoint = p;
         strippedPointCount++;
@@ -40,7 +42,7 @@ parseString(xml, function (err, result) {
     });
   });
 
-  console.log(`stripped ${strippedPointCount} duplicate points`);
+  console.log(`stripped ${strippedPointCount} of original ${totalPoints} total points`);
 
   fs.writeFileSync("./public/data.json", JSON.stringify(deduped));
 });
