@@ -1,4 +1,4 @@
-# Drawing 2,066,055 points on the javascript canvas
+# Drawing 2,066,055 Points on the HTML5 Canvas
 
 TODO IMAGE GOES HERE
 

@@ -1,34 +1,36 @@
-const COLOR_FG = "#ccc";
+const COLOR_BG = "#14213d";
+const COLOR_FG = "#ffffff";
 
 export type MapData = [number, number][][];
 
 export function drawMap(canvas: HTMLCanvasElement, data: MapData) {
-  const dim = Math.min(window.innerWidth, window.innerHeight);
+  const retinaScale = 2;
+  const dim = Math.min(window.innerWidth, window.innerHeight) * retinaScale;
   const w = dim;
   const h = dim;
 
+  const ctx = canvas.getContext("2d")!;
   canvas.width = w;
   canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
 
-  const minX = Math.min(
-    ...data.map((poly) => Math.min(...poly.map((p) => p[0])))
-  );
-  const maxX = Math.max(
-    ...data.map((poly) => Math.max(...poly.map((p) => p[0])))
-  );
-  const minY = Math.min(
-    ...data.map((poly) => Math.min(...poly.map((p) => p[1])))
-  );
-  const maxY = Math.max(
-    ...data.map((poly) => Math.max(...poly.map((p) => p[1])))
-  );
+  ctx.fillStyle = COLOR_BG;
+  ctx.fillRect(0, 0, w, h);
+  const xPad = 0.04;
+  const yPad = 0.01;
+
+  const minX =
+    Math.min(...data.map((poly) => Math.min(...poly.map((p) => p[0])))) - xPad;
+  const maxX =
+    Math.max(...data.map((poly) => Math.max(...poly.map((p) => p[0])))) + xPad;
+  const minY =
+    Math.min(...data.map((poly) => Math.min(...poly.map((p) => p[1])))) - yPad;
+  const maxY =
+    Math.max(...data.map((poly) => Math.max(...poly.map((p) => p[1])))) + yPad;
 
   const startTime = Date.now();
   const scaleX = (1 / (maxX - minX)) * w;
   const scaleY = (1 / (maxY - minY)) * h;
-  const scale = Math.min(scaleX, scaleY);
-  ctx.scale(scale, scale);
+  ctx.scale(scaleX, scaleY);
   ctx.translate(-minX, -minY);
 
   for (const polygon of data) {
