@@ -1,4 +1,4 @@
-const COLOR_BG = "#14213d";
+const COLOR_BG = "#111";
 const COLOR_FG = "#ffffff";
 
 export type MapData = [number, number][][];
@@ -34,7 +34,7 @@ export function drawMap(canvas: HTMLCanvasElement, data: MapData) {
   ctx.translate(-minX, -minY);
 
   for (const polygon of data) {
-    if (polygon.length === 0) return;
+    if (polygon.length === 0) continue;
     ctx.beginPath();
     ctx.moveTo(polygon[0][0], polygon[0][1]);
     for (let i = 1; i < polygon.length; i++) {

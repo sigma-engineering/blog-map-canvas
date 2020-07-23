@@ -34,7 +34,7 @@ TODO code snippet
 
 **25.5mb** (25,476,466 gzip / 71,851,733 raw)
 
-Suprisingly, post gzip, we almost gained nothing here, because the xml input was mostly coordinates wrapped by very repetitive XML tags that compress very efficiently.
+Surprisingly, after gzip, we almost gained nothing here, because the xml input was mostly coordinates wrapped by very repetitive XML tags that compress very efficiently.
 
 ```
 TODO code snippet
@@ -82,10 +82,5 @@ TODO IMAGE GOES HERE
 
 # Future optimizations
 
-- batch drawing calls across multiple frames
-- batching the parsing and drawing
-- using bson format for data
-
-## Binary format
-
-I tried using `msgpack` but wasn't able to get it to use single point precision, resulting in a larger file size than the truncated text: 8,963,047 (31,769,029 uncompressed), 60% larger. A custom binary format with the exact float precision we need would be ideal, but outside the scope of this project. Another problem is that [msgpack is 3x slower to deserialize than `JSON.parse`](https://github.com/msgpack/msgpack-node#performance).
+- Batch drawing calls across multiple frames: we could do the drawing in batches to avoid taking longer than a frame at a time.
+- Use a custom binary format for the polygon data: I experimented with msgpack / bson but neither outperformed gzipped truncated floats. However, a custom binary format with the exact float precision we need could take us further in shrinking the data down.
