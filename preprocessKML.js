@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require("fs");
 const { isEqual } = require("lodash");
 const parseString = require("xml2js").parseString;
@@ -16,19 +18,20 @@ parseString(xml, function (err, result) {
     })
     .filter((p) => p !== null);
 
-  const rounded = paths.map((path) =>
+  const scale = 10000;
+  const asIntPairs = paths.map((path) =>
     path
       .toString()
       .split(" ")
       .map((coord) =>
-        coord.split(",").map((v) => parseFloat(parseFloat(v).toFixed(5)))
+        coord.split(",").map((v) => Math.round(parseFloat(v) * scale))
       )
   );
 
   // strip duplicate points
   let strippedPointCount = 0;
   let totalPoints = 0;
-  const deduped = rounded.map((path) => {
+  const deduped = asIntPairs.map((path) => {
     let lastPoint = null;
     return path.filter((p) => {
       totalPoints++;
@@ -42,7 +45,23 @@ parseString(xml, function (err, result) {
     });
   });
 
-  console.log(`stripped ${strippedPointCount} of original ${totalPoints} total points`);
+  console.log(
+    `stripped ${strippedPointCount} of original ${totalPoints} total points`
+  );
 
-  fs.writeFileSync("./public/data.json", JSON.stringify(deduped));
+  // binary format is (LENGTH OF NEXT PATH IN NUMBER OF PAIRS, PAIRS...)*
+  const packedDoubles = [];
+  deduped.forEach((path) => {
+    packedDoubles.push(path.length);
+    path.forEach((pair) => {
+      packedDoubles.push(pair[0], pair[1]);
+    });
+  });
+
+  const asBinary = new Int32Array(packedDoubles);
+
+  // fs.writeFileSync("./public/data.json", JSON.stringify(deduped));
+
+  console.log(`binary size: ${asBinary.length * 4} bytes`);
+  fs.writeFileSync("./public/data.bin", asBinary);
 });

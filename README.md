@@ -40,11 +40,11 @@ Surprisingly, after gzip, we almost gained nothing here, because the xml input w
 TODO code snippet
 ```
 
-## Rounded to 5 decimal places:
+## Int32Array:
 
-**5.6mb** (5,586,960 gzip / 43,006,830 raw)
+**1.83mb** (1,834,058 gzip / 16,686,512 raw)
 
-Now we're getting somewhere. We don't need double precision flats for our purposes here. To get ~1m precision we'll truncate to 5 decimal places. https://gis.stackexchange.com/a/8674
+For our purposes, ~1m precision should be enough, which corresponds to ~5 decimal places of lat/lon (https://gis.stackexchange.com/a/8674). So we'll multiply by 10000 and round. Then we'll pack the points into an Int32Array with a compact format: We'll write out the number of coordinate pairs to expect in the current polygon, then the list of pairs, and repeat that for all polygons.
 
 ```
 TODO code snippet
@@ -52,15 +52,15 @@ TODO code snippet
 
 ## Discarding duplicate points:
 
-5.3mb (5,382,769 gzip / 34,709,454 raw)
+**1.50mb** (1,503,808 gzip / 5,657,704 raw)
 
-Since we're rounding, we've created some duplicate points. we don't gain much after gzip, because the repeated values compress well, but it's low hanging fruit and it will reduce the amount of drawing work to be done.
+Since we're rounding, we've created quite a few duplicate points. No reason to keep those, as they contribute nothing to the image. It's not a huge savings after gzip because its repetitive data, but it's definitely worth doing.
 
 ```
 TODO code snippet
 ```
 
-Overall, these steps give us a **~5.4x** reduction in gzipped size. (~20x if you want to take credit for gzip, which I won't)
+Overall, these steps give us a **~19x** reduction in gzipped size. (~70x if you want to take credit for gzip, which I won't)
 
 # Drawing it to the screen
 
@@ -83,4 +83,4 @@ TODO IMAGE GOES HERE
 # Future optimizations
 
 - Batch drawing calls across multiple frames: we could do the drawing in batches to avoid taking longer than a frame at a time.
-- Use a custom binary format for the polygon data: I experimented with msgpack / bson but neither outperformed gzipped truncated floats. However, a custom binary format with the exact float precision we need could take us further in shrinking the data down.
+- Use an even more clever binary format that takes advantage of the fact that most numbers are in a limited range. This image should happily fit within 16 integer bits of precision, since screens are 2-4k pixels wide, and 16 bits of integer precision is 65k.

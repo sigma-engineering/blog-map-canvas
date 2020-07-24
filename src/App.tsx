@@ -10,8 +10,25 @@ function MapCanvas() {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
-    fetch("./data.json")
-      .then((d) => d.json())
+    fetch("./data.bin")
+      .then((d) => d.arrayBuffer())
+      .then((ab) => {
+        let i32Arr = new Int32Array(ab);
+
+        let polygons: MapData = [];
+        let i = 0;
+        let scale = 10000;
+        while (i < i32Arr.length) {
+          let numPairs = i32Arr[i++];
+          let poly: [number, number][] = [];
+          for (let j = 0; j < numPairs; j++) {
+            poly.push([i32Arr[i++] / scale, i32Arr[i++] / scale]);
+          }
+          polygons.push(poly);
+        }
+
+        return polygons;
+      })
       .then(setData);
   }, []);
 

@@ -33,6 +33,8 @@ export function drawMap(canvas: HTMLCanvasElement, data: MapData) {
   ctx.scale(scaleX, scaleY);
   ctx.translate(-minX, -minY);
 
+  console.log("bounds: ", minX, maxX, minY, maxY);
+
   for (const polygon of data) {
     if (polygon.length === 0) continue;
     ctx.beginPath();

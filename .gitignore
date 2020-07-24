@@ -29,3 +29,5 @@ public/data.json
 public/data.json.gz
 public/data.msgpack
 public/data.msgpack.gz
+public/data.bin
+public/data.bin.gz
